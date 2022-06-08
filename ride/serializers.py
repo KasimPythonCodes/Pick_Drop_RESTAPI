@@ -1,5 +1,7 @@
 from rest_framework import serializers
 from ride.models import*
+from Userform.models import*
+
 
 # class Testrider(serializers.ModelSerializer):
 #     # id=serializers.PrimaryKeyRelatedField(many=True ,read_only=True)
@@ -17,10 +19,10 @@ from ride.models import*
 
 class UserSerializerForm(serializers.ModelSerializer):
     class Meta:
-        model = User_pick_form
-        fields=['select_truck_type' ,'pick_point' , 'drop_point' ]
+        model = PICKFORM
+        fields=['pick_point' , 'drop_point' ]
         # extra_kwargs = {'password': {'write_only': True}}
     def create(self, validated_data):
-        user =User_pick_form.objects.create(select_truck_type=validated_data['select_truck_type'],
-        pick_point=validated_data['pick_point'], drop_point=validated_data['drop_point'])
+        user =PICKFORM.objects.create(**validated_data)
+        # pick_point=validated_data['pick_point'], drop_point=validated_data['drop_point'])
         return user
