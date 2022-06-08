@@ -1,6 +1,6 @@
-
+from Userform.models import*
 from rest_framework import serializers
-from django.shortcuts import render ,HttpResponse
+from django.shortcuts import render ,HttpResponse, redirect
 from ride.models import*
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.generics import CreateAPIView
@@ -19,442 +19,553 @@ from geopy import*
 from ride.pricechange import*
 from django.utils.datastructures import MultiValueDictKeyError
 from rest_framework import exceptions
-# geopy.location.Location.address
 from rest_framework.exceptions import APIException
 from rest_framework.generics import GenericAPIView
 
+import requests
+def h(request):
+   
+   return render(request , 'index.html')
+
+
 # UserSerializer
 
-class RegisterAPI(GenericAPIView):
+class RegisterAPI(ModelViewSet):
     serializer_class = UserSerializerForm
-    def post(self, request, *args, **kwargs):
+    def get_queryset(self):
+        post_data=PICKFORM.objects.all()
+        return post_data
+    def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
-        for p in Rider_Trip.objects.all():
-            print(p.price1_per_km,"kasim")
+        for p in Bike_Trip.objects.all():
+            print("Bike_Trip")
+        for C in Champion_Trip.objects.all():
+            print(C.price1_per_km,"Champion")
+        for E in Ecovan_Trip.objects.all():
+            print(E.price1_per_km,"Ecovan")
+        for M in Maruti_suzuki_super_carry_Trip.objects.all():
+            print(M.price1_per_km,"Maruti")
+        for T in Tata_ace_7FT_Trip.objects.all():
+            print(T.price1_per_km,"Tata_ace_7FT_Trip")
+        for TT in Tata_ace_8FT_Trip.objects.all():
+            print(TT.price1_per_km,"Tata_ace_8FT")
+        for B in Blero_8FT_Trip.objects.all():
+            print(B.price1_per_km,"Blero_8FT_Trip")
+        for K in Vehicle_type.objects.all():
+            print(K.vehicle_type1,"Vehcle")
         now = datetime.datetime.now()
         current_time = now.strftime("%H:%M:%S")
-        # print(serializer,"$$$$$$$$$")
         serializer.is_valid(raise_exception=True)
-        user = serializer.save()
         geolocator = Nominatim(user_agent="kasim",timeout=10)
+        user = serializer.save()    b
         n=user.pick_point
         n1=user.drop_point
-        # print(n,"1",n1,"2" ,"PICK &&*B DROP")
         location1 = geolocator.geocode(n) 
         location2 = geolocator.geocode(n1)
         u1=user.pick_point=location1 
         u2=user.drop_point=location2 
-        #    return JSONResponse({'error' : str(e)},status=500)
-            # return response.Response("kkkkkkk")
-        # print(u1,"pick location and " , u2 ,"drop location","mmmmmmmmmmmmm")
-        # print(location1,"location 11","000000000000")
-        # print(location2,"location 22","99999999999999")
         if u1 and u2:
             l1,l2=u1.latitude, u1.longitude
             l3,l4=u2.latitude, u2.longitude
             k = (l1, l2)
             de= (l3,l4)
-            # print(great_circle(k, de).km , "kasimsaifi @@@@@@@@@@@@@######")
             dis=great_circle(k, de).km
-            user.distance=dis
-            user.save()
-            # stu=User_pick_form(
-            # id=user,
-            # )
-            # stu.save()
-        if user.select_truck_type!=None and user.pick_point!=None and user.drop_point!=None and user!=None:
+            user.distance_with_Bike=dis
+            user.distance_with_Champion=dis
+            user.distance_with_Ecovan=dis
+            user.distance_with_Maruti=dis
+            user.distance_with_Tata_ace_7FT=dis
+            user.distance_with_Tata_ace_8FT=dis
+            user.distance_with_Blero_8FT=dis
+            # user.save()
+            if dis:
+                return redirect('kasim')
+
+
+        if user.pick_point!=None and user.drop_point!=None and user!=None:
             if current_time > '05:00:00' and current_time < '14:59:59':
-                if p.extra1_distance >= dis or p.extra2_distance >= dis:
-                    fare=p.basefare+(dis - p.basekm)*p.price1_per_km
-                    user.total_price=fare
-                    user.save()
-                    print(fare,"1")
-                    return response.Response(f"{'Total Fare',fare ,'Time', current_time}") 
-                elif  p.extra2_distance >= dis or p.extra3_distance >= dis:   
-                    fare=p.basefare+(dis - p.basekm)*p.price2_per_km
-                    user.total_price=fare
-                    user.save()
-                    print(fare,"2")
-                    return response.Response(f"{'Total Fare',fare ,'Time', current_time}") 
-
-                elif  p.extra3_distance >= dis or p.extra4_distance >= dis:   
-                    fare=p.basefare+(dis - p.basekm)*p.price3_per_km
-                    user.total_price=fare
-                    user.save()
-                    print(fare,"3")
-                    return response.Response(f"{'Total Fare',fare ,'Time', current_time}") 
+                if (p.extra1_distance >= dis or p.extra2_distance >=dis 
+                    or  C.extra1_distance >= dis or C.extra2_distance >= dis or
+                    E.extra1_distance >= dis or E.extra2_distance >= dis 
+                    or  M.extra1_distance >= dis or T.extra2_distance >= dis
+                    or  TT.extra1_distance >= dis or TT.extra2_distance >= dis
+                    or  B.extra1_distance >= dis or B.extra2_distance >= dis or K.vehicle_type1
+                    or K.vehicle_type2 or K.vehicle_type3 or K.vehicle_type4 or
+                        K.vehicle_type5 or K.vehicle_type6 or K.vehicle_type7):
+                    fare1,f1=p.basefare+(dis - p.basekm)*p.price1_per_km , K.vehicle_type1
+                    fare2,f2=C.basefare+(dis - C.basekm)*C.price1_per_km,K.vehicle_type2
+                    fare3,f3=E.basefare+(dis - E.basekm)*E.price1_per_km,K.vehicle_type3
+                    fare4,f4=M.basefare+(dis - M.basekm)*M.price1_per_km,K.vehicle_type4
+                    fare5,f5=T.basefare+(dis - T.basekm)*T.price1_per_km,K.vehicle_type5
+                    fare6,f6=TT.basefare+(dis - TT.basekm)*TT.price1_per_km,K.vehicle_type6
+                    fare7,f7=B.basefare+(dis - B.basekm)*B.price1_per_km,K.vehicle_type7
+                    user.total_price_Bike=fare1
+                    user.total_price_Champion=fare2
+                    user.total_price_Ecovan=fare3
+                    user.total_price_Maruti=fare4
+                    user.total_price_Tata_ace_7FT=fare5
+                    user.total_price_Tata_ace_8FT=fare6
+                    user.total_price_Blero_8FT=fare7
+                    # user.save()
+                    print("K2")
+                    return response.Response({f1,fare1,fare2,fare3,fare4,fare5,fare6,fare7,f2,f3,f4,f5,f6,f7 }) 
                 
-                elif  p.extra4_distance >= dis or p.extra5_distance >= dis:   
-                    fare=p.basefare+(dis - p.basekm)*p.price4_per_km
-                    user.total_price=fare
-                    user.save()
-                    print(fare,"4")
-                    return response.Response(f"{'Total Fare',fare ,'Time', current_time}") 
-
-                elif  p.extra5_distance >= dis or p.extra6_distance >= dis:   
-                    fare=p.basefare+(dis - p.basekm)*p.price5_per_km
-                    user.total_price=fare
-                    user.save()
-                    print(fare,"5")
-                    return response.Response(f"{'Total Fare',fare ,'Time', current_time}")   
+                elif (p.extra2_distance >= dis or p.extra3_distance >=dis 
+                   or  C.extra2_distance >= dis or C.extra3_distance >= dis or
+                  E.extra2_distance >= dis or E.extra3_distance >= dis 
+                  or  M.extra2_distance >= dis or T.extra3_distance >= dis
+                  or  TT.extra2_distance >= dis or TT.extra3_distance >= dis
+                  or  B.extra2_distance >= dis or B.extra3_distance >= dis or K.vehicle_type1
+                  or K.vehicle_type2 or K.vehicle_type3 or K.vehicle_type4 or
+                     K.vehicle_type5 or K.vehicle_type6 or K.vehicle_type7):
+                    fare1,f1=p.basefare+(dis - p.basekm)*p.price2_per_km , K.vehicle_type1
+                    fare2,f2=C.basefare+(dis - C.basekm)*C.price2_per_km,K.vehicle_type2
+                    fare3,f3=E.basefare+(dis - E.basekm)*E.price2_per_km,K.vehicle_type3
+                    fare4,f4=M.basefare+(dis - M.basekm)*M.price2_per_km,K.vehicle_type4
+                    fare5,f5=T.basefare+(dis - T.basekm)*T.price2_per_km,K.vehicle_type5
+                    fare6,f6=TT.basefare+(dis - TT.basekm)*TT.price2_per_km,K.vehicle_type6
+                    fare7,f7=B.basefare+(dis - B.basekm)*B.price2_per_km,K.vehicle_type7
+                    user.total_price_Bike=fare1
+                    user.total_price_Champion=fare2
+                    user.total_price_Ecovan=fare3
+                    user.total_price_Maruti=fare4
+                    user.total_price_Tata_ace_7FT=fare5
+                    user.total_price_Tata_ace_8FT=fare6
+                    user.total_price_Blero_8FT=fare7
+                    # user.save()
+                    print("K2")
+                    return response.Response({f1,fare1,fare2,fare3,fare4,fare5,fare6,fare7,f2,f3,f4,f5,f6,f7 }) 
                 
-                elif p.extra6_distance <= dis or dis:   
-                    fare=p.basefare+(dis - p.basekm)*p.price6_per_km
-                    user.total_price=fare
-                    user.save()
-                    print(fare,"6")
-                    return response.Response(f"{'Total Fare',fare ,'Time', current_time}")    
+                elif (p.extra3_distance >= dis or p.extra4_distance >=dis 
+                   or  C.extra3_distance >= dis or C.extra4_distance >= dis or
+                  E.extra3_distance >= dis or E.extra4_distance >= dis 
+                  or  M.extra3_distance >= dis or T.extra4_distance >= dis
+                  or  TT.extra3_distance >= dis or TT.extra4_distance >= dis
+                  or  B.extra3_distance >= dis or B.extra4_distance >= dis or K.vehicle_type1
+                  or K.vehicle_type2 or K.vehicle_type3 or K.vehicle_type4 or
+                     K.vehicle_type5 or K.vehicle_type6 or K.vehicle_type7):
+                    fare1,f1=p.basefare+(dis - p.basekm)*p.price3_per_km , K.vehicle_type1
+                    fare2,f2=C.basefare+(dis - C.basekm)*C.price3_per_km,K.vehicle_type2
+                    fare3,f3=E.basefare+(dis - E.basekm)*E.price3_per_km,K.vehicle_type3
+                    fare4,f4=M.basefare+(dis - M.basekm)*M.price3_per_km,K.vehicle_type4
+                    fare5,f5=T.basefare+(dis - T.basekm)*T.price3_per_km,K.vehicle_type5
+                    fare6,f6=TT.basefare+(dis - TT.basekm)*TT.price3_per_km,K.vehicle_type6
+                    fare7,f7=B.basefare+(dis - B.basekm)*B.price3_per_km,K.vehicle_type7
+                    user.total_price_Bike=fare1
+                    user.total_price_Champion=fare2
+                    user.total_price_Ecovan=fare3
+                    user.total_price_Maruti=fare4
+                    user.total_price_Tata_ace_7FT=fare5
+                    user.total_price_Tata_ace_8FT=fare6
+                    user.total_price_Blero_8FT=fare7
+                    # user.save()
+                    print("K2")
+                    return response.Response({f1,fare1,fare2,fare3,fare4,fare5,fare6,fare7,f2,f3,f4,f5,f6,f7 }) 
+                
+                elif (p.extra4_distance >= dis or p.extra5_distance >=dis 
+                   or  C.extra4_distance >= dis or C.extra5_distance >= dis 
+                   or E.extra4_distance >= dis or E.extra5_distance >= dis 
+                  or  M.extra4_distance >= dis or T.extra5_distance >= dis
+                  or  TT.extra4_distance >= dis or TT.extra5_distance >= dis
+                  or  B.extra4_distance >= dis or B.extra5_distance >= dis or K.vehicle_type1
+                  or K.vehicle_type2 or K.vehicle_type3 or K.vehicle_type4 or
+                     K.vehicle_type5 or K.vehicle_type6 or K.vehicle_type7):
+                    fare1,f1=p.basefare+(dis - p.basekm)*p.price4_per_km , K.vehicle_type1
+                    fare2,f2=C.basefare+(dis - C.basekm)*C.price4_per_km,K.vehicle_type2
+                    fare3,f3=E.basefare+(dis - E.basekm)*E.price4_per_km,K.vehicle_type3
+                    fare4,f4=M.basefare+(dis - M.basekm)*M.price4_per_km,K.vehicle_type4
+                    fare5,f5=T.basefare+(dis - T.basekm)*T.price4_per_km,K.vehicle_type5
+                    fare6,f6=TT.basefare+(dis - TT.basekm)*TT.price4_per_km,K.vehicle_type6
+                    fare7,f7=B.basefare+(dis - B.basekm)*B.price4_per_km,K.vehicle_type7
+                    user.total_price_Bike=fare1
+                    user.total_price_Champion=fare2
+                    user.total_price_Ecovan=fare3
+                    user.total_price_Maruti=fare4
+                    user.total_price_Tata_ace_7FT=fare5
+                    user.total_price_Tata_ace_8FT=fare6
+                    user.total_price_Blero_8FT=fare7
+                    # user.save()
+                    print("K2")
+                    return response.Response({f1,fare1,fare2,fare3,fare4,fare5,fare6,fare7,f2,f3,f4,f5,f6,f7 }) 
+                      
+                elif (p.extra5_distance >= dis or p.extra6_distance >=dis 
+                   or  C.extra5_distance >= dis or C.extra6_distance >= dis or
+                  E.extra5_distance >= dis or E.extra6_distance >= dis 
+                  or  M.extra5_distance >= dis or T.extra6_distance >= dis
+                  or  TT.extra5_distance >= dis or TT.extra6_distance >= dis
+                  or  B.extra5_distance >= dis or B.extra6_distance >= dis or K.vehicle_type1
+                  or K.vehicle_type2 or K.vehicle_type3 or K.vehicle_type4 or
+                     K.vehicle_type5 or K.vehicle_type6 or K.vehicle_type7):
+                    fare1,f1=p.basefare+(dis - p.basekm)*p.price5_per_km , K.vehicle_type1
+                    fare2,f2=C.basefare+(dis - C.basekm)*C.price5_per_km,K.vehicle_type2
+                    fare3,f3=E.basefare+(dis - E.basekm)*E.price5_per_km,K.vehicle_type3
+                    fare4,f4=M.basefare+(dis - M.basekm)*M.price5_per_km,K.vehicle_type4
+                    fare5,f5=T.basefare+(dis - T.basekm)*T.price5_per_km,K.vehicle_type5
+                    fare6,f6=TT.basefare+(dis - TT.basekm)*TT.price5_per_km,K.vehicle_type6
+                    fare7,f7=B.basefare+(dis - B.basekm)*B.price5_per_km,K.vehicle_type7
+                    user.total_price_Bike=fare1
+                    user.total_price_Champion=fare2
+                    user.total_price_Ecovan=fare3
+                    user.total_price_Maruti=fare4
+                    user.total_price_Tata_ace_7FT=fare5
+                    user.total_price_Tata_ace_8FT=fare6
+                    user.total_price_Blero_8FT=fare7
+                    # user.save()
+                    print("K2")
+                    return response.Response({f1,fare1,fare2,fare3,fare4,fare5,fare6,fare7,f2,f3,f4,f5,f6,f7 }) 
+                
+                elif (p.extra6_distance >= dis or dis or  
+                    C.extra6_distance >= dis or  dis or 
+                    E.extra6_distance >= dis or dis or  
+                    M.extra6_distance >= dis or dis or  
+                    TT.extra6_distance >= dis or  dis or  
+                    B.extra6_distance >= dis or  dis or 
+                    K.vehicle_type1 or K.vehicle_type2 or 
+                    K.vehicle_type3 or K.vehicle_type4 or
+                    K.vehicle_type5 or K.vehicle_type6 or K.vehicle_type7):
+
+                    fare1,f1=p.basefare+(dis - p.basekm)*p.price6_per_km , K.vehicle_type1
+                    fare2,f2=C.basefare+(dis - C.basekm)*C.price6_per_km,K.vehicle_type2
+                    fare3,f3=E.basefare+(dis - E.basekm)*E.price6_per_km,K.vehicle_type3
+                    fare4,f4=M.basefare+(dis - M.basekm)*M.price6_per_km,K.vehicle_type4
+                    fare5,f5=T.basefare+(dis - T.basekm)*T.price6_per_km,K.vehicle_type5
+                    fare6,f6=TT.basefare+(dis - TT.basekm)*TT.price6_per_km,K.vehicle_type6
+                    fare7,f7=B.basefare+(dis - B.basekm)*B.price6_per_km,K.vehicle_type7
+                    user.total_price_Bike=fare1
+                    user.total_price_Champion=fare2
+                    user.total_price_Ecovan=fare3
+                    user.total_price_Maruti=fare4
+                    user.total_price_Tata_ace_7FT=fare5
+                    user.total_price_Tata_ace_8FT=fare6
+                    user.total_price_Blero_8FT=fare7
+                    # user.save()
+                    print("K2")
+                    return response.Response({f1,fare1,fare2,fare3,fare4,fare5,fare6,fare7,f2,f3,f4,f5,f6,f7 }) 
+                
+            
+            
             elif current_time > '15:00:00' and current_time < '20:59:59':
-                    if p.extra1_distance >= dis or p.extra2_distance >= dis:
-                        fare=p.basefare+(dis - p.basekm)*p.price1_per_km
-                        user.total_price=fare
-                        user.save()
-                        print(fare,"1")
-                        return response.Response(f"{'Total Fare',fare ,'Time', current_time}") 
-                    elif  p.extra2_distance >= dis or p.extra3_distance >= dis:   
-                        fare=p.basefare+(dis - p.basekm)*p.price2_per_km
-                        user.total_price=fare
-                        user.save()
-                        print(fare,"2")
-                        return response.Response(f"{'Total Fare',fare ,'Time', current_time}") 
-
-                    elif  p.extra3_distance >= dis or p.extra4_distance >= dis:   
-                        fare=p.basefare+(dis - p.basekm)*p.price3_per_km
-                        user.total_price=fare
-                        user.save()
-                        print(fare,"3")
-                        return response.Response(f"{'Total Fare',fare ,'Time', current_time}") 
-                    
-                    elif  p.extra4_distance >= dis or p.extra5_distance >= dis:   
-                        fare=p.basefare+(dis - p.basekm)*p.price4_per_km
-                        user.total_price=fare
-                        user.save()
-                        print(fare,"4" )
-                        return response.Response(f"{'Total Fare',fare ,'Time', current_time}") 
-
-                    elif  p.extra5_distance >= dis or p.extra6_distance >= dis:   
-                        fare=p.basefare+(dis - p.basekm)*p.price5_per_km
-                        user.total_price=fare
-                        user.save()
-                        print(fare,"5")
-                        return response.Response(f"{'Total Fare',fare ,'Time', current_time}")   
+                if (p.extra1_distance >= dis or p.extra2_distance >=dis 
+                   or  C.extra1_distance >= dis or C.extra2_distance >= dis or
+                  E.extra1_distance >= dis or E.extra2_distance >= dis 
+                  or  M.extra1_distance >= dis or T.extra2_distance >= dis
+                  or  TT.extra1_distance >= dis or TT.extra2_distance >= dis
+                  or  B.extra1_distance >= dis or B.extra2_distance >= dis or K.vehicle_type1
+                  or K.vehicle_type2 or K.vehicle_type3 or K.vehicle_type4 or
+                     K.vehicle_type5 or K.vehicle_type6 or K.vehicle_type7):
+                    fare1,f1=p.basefare+(dis - p.basekm)*p.price1_per_km , K.vehicle_type1
+                    fare2,f2=C.basefare+(dis - C.basekm)*C.price1_per_km,K.vehicle_type2
+                    fare3,f3=E.basefare+(dis - E.basekm)*E.price1_per_km,K.vehicle_type3
+                    fare4,f4=M.basefare+(dis - M.basekm)*M.price1_per_km,K.vehicle_type4
+                    fare5,f5=T.basefare+(dis - T.basekm)*T.price1_per_km,K.vehicle_type5
+                    fare6,f6=TT.basefare+(dis - TT.basekm)*TT.price1_per_km,K.vehicle_type6
+                    fare7,f7=B.basefare+(dis - B.basekm)*B.price1_per_km,K.vehicle_type7
+                    user.total_price_Bike=fare1
+                    user.total_price_Champion=fare2
+                    user.total_price_Ecovan=fare3
+                    user.total_price_Maruti=fare4
+                    user.total_price_Tata_ace_7FT=fare5
+                    user.total_price_Tata_ace_8FT=fare6
+                    user.total_price_Blero_8FT=fare7
+                    # user.save()
+                    print("K2")
+                    return response.Response({f1,fare1,fare2,fare3,fare4,fare5,fare6,fare7,f2,f3,f4,f5,f6,f7 }) 
                 
-                    elif p.extra6_distance <= dis or dis:   
-                        fare=p.basefare+(dis - p.basekm)*p.price6_per_km
-                        user.total_price=fare
-                        user.save()
-                        print(fare,"6")
-                        return response.Response(f"{'Total Fare',fare ,'Time', current_time}")  
+                elif (p.extra2_distance >= dis or p.extra3_distance >=dis 
+                   or  C.extra2_distance >= dis or C.extra3_distance >= dis or
+                  E.extra2_distance >= dis or E.extra3_distance >= dis 
+                  or  M.extra2_distance >= dis or T.extra3_distance >= dis
+                  or  TT.extra2_distance >= dis or TT.extra3_distance >= dis
+                  or  B.extra2_distance >= dis or B.extra3_distance >= dis or K.vehicle_type1
+                  or K.vehicle_type2 or K.vehicle_type3 or K.vehicle_type4 or
+                     K.vehicle_type5 or K.vehicle_type6 or K.vehicle_type7):
+                    fare1,f1=p.basefare+(dis - p.basekm)*p.price2_per_km , K.vehicle_type1
+                    fare2,f2=C.basefare+(dis - C.basekm)*C.price2_per_km,K.vehicle_type2
+                    fare3,f3=E.basefare+(dis - E.basekm)*E.price2_per_km,K.vehicle_type3
+                    fare4,f4=M.basefare+(dis - M.basekm)*M.price2_per_km,K.vehicle_type4
+                    fare5,f5=T.basefare+(dis - T.basekm)*T.price2_per_km,K.vehicle_type5
+                    fare6,f6=TT.basefare+(dis - TT.basekm)*TT.price2_per_km,K.vehicle_type6
+                    fare7,f7=B.basefare+(dis - B.basekm)*B.price2_per_km,K.vehicle_type7
+                    user.total_price_Bike=fare1
+                    user.total_price_Champion=fare2
+                    user.total_price_Ecovan=fare3
+                    user.total_price_Maruti=fare4
+                    user.total_price_Tata_ace_7FT=fare5
+                    user.total_price_Tata_ace_8FT=fare6
+                    user.total_price_Blero_8FT=fare7
+                    # user.save()
+                    print("K2")
+                    return response.Response({f1,fare1,fare2,fare3,fare4,fare5,fare6,fare7,f2,f3,f4,f5,f6,f7 }) 
+                
+                elif (p.extra3_distance >= dis or p.extra4_distance >=dis 
+                   or  C.extra3_distance >= dis or C.extra4_distance >= dis or
+                  E.extra3_distance >= dis or E.extra4_distance >= dis 
+                  or  M.extra3_distance >= dis or T.extra4_distance >= dis
+                  or  TT.extra3_distance >= dis or TT.extra4_distance >= dis
+                  or  B.extra3_distance >= dis or B.extra4_distance >= dis or K.vehicle_type1
+                  or K.vehicle_type2 or K.vehicle_type3 or K.vehicle_type4 or
+                     K.vehicle_type5 or K.vehicle_type6 or K.vehicle_type7):
+                    fare1,f1=p.basefare+(dis - p.basekm)*p.price3_per_km , K.vehicle_type1
+                    fare2,f2=C.basefare+(dis - C.basekm)*C.price3_per_km,K.vehicle_type2
+                    fare3,f3=E.basefare+(dis - E.basekm)*E.price3_per_km,K.vehicle_type3
+                    fare4,f4=M.basefare+(dis - M.basekm)*M.price3_per_km,K.vehicle_type4
+                    fare5,f5=T.basefare+(dis - T.basekm)*T.price3_per_km,K.vehicle_type5
+                    fare6,f6=TT.basefare+(dis - TT.basekm)*TT.price3_per_km,K.vehicle_type6
+                    fare7,f7=B.basefare+(dis - B.basekm)*B.price3_per_km,K.vehicle_type7
+                    user.total_price_Bike=fare1
+                    user.total_price_Champion=fare2
+                    user.total_price_Ecovan=fare3
+                    user.total_price_Maruti=fare4
+                    user.total_price_Tata_ace_7FT=fare5
+                    user.total_price_Tata_ace_8FT=fare6
+                    user.total_price_Blero_8FT=fare7
+                    # user.save()
+                    print("K2")
+                    return response.Response({f1,fare1,fare2,fare3,fare4,fare5,fare6,fare7,f2,f3,f4,f5,f6,f7 }) 
+                
+                elif (p.extra4_distance >= dis or p.extra5_distance >=dis 
+                   or  C.extra4_distance >= dis or C.extra5_distance >= dis 
+                   or E.extra4_distance >= dis or E.extra5_distance >= dis 
+                  or  M.extra4_distance >= dis or T.extra5_distance >= dis
+                  or  TT.extra4_distance >= dis or TT.extra5_distance >= dis
+                  or  B.extra4_distance >= dis or B.extra5_distance >= dis or K.vehicle_type1
+                  or K.vehicle_type2 or K.vehicle_type3 or K.vehicle_type4 or
+                     K.vehicle_type5 or K.vehicle_type6 or K.vehicle_type7):
+                    fare1,f1=p.basefare+(dis - p.basekm)*p.price4_per_km , K.vehicle_type1
+                    fare2,f2=C.basefare+(dis - C.basekm)*C.price4_per_km,K.vehicle_type2
+                    fare3,f3=E.basefare+(dis - E.basekm)*E.price4_per_km,K.vehicle_type3
+                    fare4,f4=M.basefare+(dis - M.basekm)*M.price4_per_km,K.vehicle_type4
+                    fare5,f5=T.basefare+(dis - T.basekm)*T.price4_per_km,K.vehicle_type5
+                    fare6,f6=TT.basefare+(dis - TT.basekm)*TT.price4_per_km,K.vehicle_type6
+                    fare7,f7=B.basefare+(dis - B.basekm)*B.price4_per_km,K.vehicle_type7
+                    user.total_price_Bike=fare1
+                    user.total_price_Champion=fare2
+                    user.total_price_Ecovan=fare3
+                    user.total_price_Maruti=fare4
+                    user.total_price_Tata_ace_7FT=fare5
+                    user.total_price_Tata_ace_8FT=fare6
+                    user.total_price_Blero_8FT=fare7
+                    # user.save()
+                    print("K2")
+                    return response.Response({f1,fare1,fare2,fare3,fare4,fare5,fare6,fare7,f2,f3,f4,f5,f6,f7 }) 
+                      
+                elif (p.extra5_distance >= dis or p.extra6_distance >=dis 
+                   or  C.extra5_distance >= dis or C.extra6_distance >= dis or
+                  E.extra5_distance >= dis or E.extra6_distance >= dis 
+                  or  M.extra5_distance >= dis or T.extra6_distance >= dis
+                  or  TT.extra5_distance >= dis or TT.extra6_distance >= dis
+                  or  B.extra5_distance >= dis or B.extra6_distance >= dis or K.vehicle_type1
+                  or K.vehicle_type2 or K.vehicle_type3 or K.vehicle_type4 or
+                     K.vehicle_type5 or K.vehicle_type6 or K.vehicle_type7):
+                    fare1,f1=p.basefare+(dis - p.basekm)*p.price5_per_km , K.vehicle_type1
+                    fare2,f2=C.basefare+(dis - C.basekm)*C.price5_per_km,K.vehicle_type2
+                    fare3,f3=E.basefare+(dis - E.basekm)*E.price5_per_km,K.vehicle_type3
+                    fare4,f4=M.basefare+(dis - M.basekm)*M.price5_per_km,K.vehicle_type4
+                    fare5,f5=T.basefare+(dis - T.basekm)*T.price5_per_km,K.vehicle_type5
+                    fare6,f6=TT.basefare+(dis - TT.basekm)*TT.price5_per_km,K.vehicle_type6
+                    fare7,f7=B.basefare+(dis - B.basekm)*B.price5_per_km,K.vehicle_type7
+                    user.total_price_Bike=fare1
+                    user.total_price_Champion=fare2
+                    user.total_price_Ecovan=fare3
+                    user.total_price_Maruti=fare4
+                    user.total_price_Tata_ace_7FT=fare5
+                    user.total_price_Tata_ace_8FT=fare6
+                    user.total_price_Blero_8FT=fare7
+                    # user.save()
+                    print("K2")
+                    return response.Response({f1,fare1,fare2,fare3,fare4,fare5,fare6,fare7,f2,f3,f4,f5,f6,f7 }) 
+                
+                elif (p.extra6_distance >= dis or dis or  
+                    C.extra6_distance >= dis or  dis or 
+                    E.extra6_distance >= dis or dis or  
+                    M.extra6_distance >= dis or dis or  
+                    TT.extra6_distance >= dis or  dis or  
+                    B.extra6_distance >= dis or  dis or 
+                    K.vehicle_type1 or K.vehicle_type2 or 
+                    K.vehicle_type3 or K.vehicle_type4 or
+                    K.vehicle_type5 or K.vehicle_type6 or K.vehicle_type7):
+
+                    fare1,f1=p.basefare+(dis - p.basekm)*p.price6_per_km , K.vehicle_type1
+                    fare2,f2=C.basefare+(dis - C.basekm)*C.price6_per_km,K.vehicle_type2
+                    fare3,f3=E.basefare+(dis - E.basekm)*E.price6_per_km,K.vehicle_type3
+                    fare4,f4=M.basefare+(dis - M.basekm)*M.price6_per_km,K.vehicle_type4
+                    fare5,f5=T.basefare+(dis - T.basekm)*T.price6_per_km,K.vehicle_type5
+                    fare6,f6=TT.basefare+(dis - TT.basekm)*TT.price6_per_km,K.vehicle_type6
+                    fare7,f7=B.basefare+(dis - B.basekm)*B.price6_per_km,K.vehicle_type7
+                    user.total_price_Bike=fare1
+                    user.total_price_Champion=fare2
+                    user.total_price_Ecovan=fare3
+                    user.total_price_Maruti=fare4
+                    user.total_price_Tata_ace_7FT=fare5
+                    user.total_price_Tata_ace_8FT=fare6
+                    user.total_price_Blero_8FT=fare7
+                    # user.save()
+                    print("K2")
+                    return response.Response({f1,fare1,fare2,fare3,fare4,fare5,fare6,fare7,f2,f3,f4,f5,f6,f7 }) 
+                
             elif current_time > '21:00:00' and current_time < '04:59:59':
-                if p.extra1_distance >= dis or p.extra2_distance >= dis:
-                    fare=p.basefare+(dis - p.basekm)*p.price1_per_km
-                    user.total_price=fare
-                    user.save()
-                    print(fare,"1")
-                    return response.Response(f"{'Total Fare',fare ,'Time', current_time}") 
-                elif  p.extra2_distance >= dis or p.extra3_distance >= dis:   
-                    fare=p.basefare+(dis - p.basekm)*p.price2_per_km
-                    user.total_price=fare
-                    user.save()
-                    print(fare,"2")
-                    return response.Response(f"{'Total Fare',fare ,'Time', current_time}") 
-
-                elif  p.extra3_distance >= dis or p.extra4_distance >= dis:   
-                    fare=p.basefare+(dis - p.basekm)*p.price3_per_km
-                    user.total_price=fare
-                    user.save()
-                    print(fare,"3")
-                    return response.Response(f"{'Total Fare',fare ,'Time', current_time}") 
+                if (p.extra1_distance >= dis or p.extra2_distance >=dis 
+                    or  C.extra1_distance >= dis or C.extra2_distance >= dis or
+                    E.extra1_distance >= dis or E.extra2_distance >= dis 
+                    or  M.extra1_distance >= dis or T.extra2_distance >= dis
+                    or  TT.extra1_distance >= dis or TT.extra2_distance >= dis
+                    or  B.extra1_distance >= dis or B.extra2_distance >= dis or K.vehicle_type1
+                    or K.vehicle_type2 or K.vehicle_type3 or K.vehicle_type4 or
+                        K.vehicle_type5 or K.vehicle_type6 or K.vehicle_type7):
+                    fare1,f1=p.basefare+(dis - p.basekm)*p.price1_per_km , K.vehicle_type1
+                    fare2,f2=C.basefare+(dis - C.basekm)*C.price1_per_km,K.vehicle_type2
+                    fare3,f3=E.basefare+(dis - E.basekm)*E.price1_per_km,K.vehicle_type3
+                    fare4,f4=M.basefare+(dis - M.basekm)*M.price1_per_km,K.vehicle_type4
+                    fare5,f5=T.basefare+(dis - T.basekm)*T.price1_per_km,K.vehicle_type5
+                    fare6,f6=TT.basefare+(dis - TT.basekm)*TT.price1_per_km,K.vehicle_type6
+                    fare7,f7=B.basefare+(dis - B.basekm)*B.price1_per_km,K.vehicle_type7
+                    user.total_price_Bike=fare1
+                    user.total_price_Champion=fare2
+                    user.total_price_Ecovan=fare3
+                    user.total_price_Maruti=fare4
+                    user.total_price_Tata_ace_7FT=fare5
+                    user.total_price_Tata_ace_8FT=fare6
+                    user.total_price_Blero_8FT=fare7
+                    # user.save()
+                    print("K2")
+                    return response.Response({f1,fare1,fare2,fare3,fare4,fare5,fare6,fare7,f2,f3,f4,f5,f6,f7 }) 
                 
-                elif  p.extra4_distance >= dis or p.extra5_distance >= dis:   
-                    fare=p.basefare+(dis - p.basekm)*p.price4_per_km
-                    user.total_price=fare
-                    user.save()
-                    print(fare,"4")
-                    return response.Response(f"{'Total Fare',fare ,'Time', current_time}") 
-
-                elif  p.extra5_distance >= dis or p.extra6_distance >= dis:   
-                    fare=p.basefare+(dis - p.basekm)*p.price5_per_km
-                    user.total_price=fare
-                    user.save()
-                    print(fare,"5")
-                    return response.Response(f"{'Total Fare',fare ,'Time', current_time}")   
+                elif (p.extra2_distance >= dis or p.extra3_distance >=dis 
+                   or  C.extra2_distance >= dis or C.extra3_distance >= dis or
+                  E.extra2_distance >= dis or E.extra3_distance >= dis 
+                  or  M.extra2_distance >= dis or T.extra3_distance >= dis
+                  or  TT.extra2_distance >= dis or TT.extra3_distance >= dis
+                  or  B.extra2_distance >= dis or B.extra3_distance >= dis or K.vehicle_type1
+                  or K.vehicle_type2 or K.vehicle_type3 or K.vehicle_type4 or
+                     K.vehicle_type5 or K.vehicle_type6 or K.vehicle_type7):
+                    fare1,f1=p.basefare+(dis - p.basekm)*p.price2_per_km , K.vehicle_type1
+                    fare2,f2=C.basefare+(dis - C.basekm)*C.price2_per_km,K.vehicle_type2
+                    fare3,f3=E.basefare+(dis - E.basekm)*E.price2_per_km,K.vehicle_type3
+                    fare4,f4=M.basefare+(dis - M.basekm)*M.price2_per_km,K.vehicle_type4
+                    fare5,f5=T.basefare+(dis - T.basekm)*T.price2_per_km,K.vehicle_type5
+                    fare6,f6=TT.basefare+(dis - TT.basekm)*TT.price2_per_km,K.vehicle_type6
+                    fare7,f7=B.basefare+(dis - B.basekm)*B.price2_per_km,K.vehicle_type7
+                    user.total_price_Bike=fare1
+                    user.total_price_Champion=fare2
+                    user.total_price_Ecovan=fare3
+                    user.total_price_Maruti=fare4
+                    user.total_price_Tata_ace_7FT=fare5
+                    user.total_price_Tata_ace_8FT=fare6
+                    user.total_price_Blero_8FT=fare7
+                    # user.save()
+                    print("K2")
+                    return response.Response({f1,fare1,fare2,fare3,fare4,fare5,fare6,fare7,f2,f3,f4,f5,f6,f7 }) 
                 
-                elif p.extra6_distance <= dis or dis:   
-                    fare=p.basefare+(dis - p.basekm)*p.price6_per_km
-                    user.total_price=fare
-                    user.save()
-                    print(fare,"6")
-                    return response.Response(f"{'Total Fare',fare ,'Time', current_time}")
-
-
-        # return Response({
-        # # "user": UserSerializer(user, context=self.get_serializer_context()).data,
-        # "user": UserSerializerForm(user, context=self.get_serializer_context()).data,
-        # # "token": AuthToken.objects.create(user)[1]
-        # })
-
-
-# class index(ModelViewSet):
-#     serializer_class=Testrider
-#     def get_queryset(self):
-#         post=User_pick_form.objects.all()
-#         return post
-#     def create(self,request,*args, **kwargs):
-#         post_data=request.data
-#         for p in Rider_Trip.objects.all():
-#             print(p.distance,"kasim")
-#         now = datetime.datetime.now()
-#         current_time = now.strftime("%H:%M:%S")
-#         try:
-#          user=User_pick_form.objects.create(pick_point=post_data['pick_point'],drop_point=post_data['drop_point'] ,select_truck_type=post_data['select_truck_type']) #first db data    
-#         except TypeError:
-#             raise TypeError("kasim")
-#         geolocator = Nominatim(user_agent="kasim",timeout=10)
-#         n=user.pick_point
-#         n1=user.drop_point
-#         # print(n,"1",n1,"2" ,"PICK &&*B DROP")
-#         location1 = geolocator.geocode(n) 
-#         location2 = geolocator.geocode(n1)
-#         u1=user.pick_point=location1 
-#         u2=user.drop_point=location2 
-#         #    return JSONResponse({'error' : str(e)},status=500)
-#             # return response.Response("kkkkkkk")
-#         print(u1,"pick location and " , u2 ,"drop location","mmmmmmmmmmmmm")
-#         print(location1,"location 11","000000000000")
-#         print(location2,"location 22","99999999999999")
-#         if  location1==None or location2==None:
-#              raise serializers.ValidationError({'name': 'Please enter a valid pick  and drop locations.'})
-#         # if u1==None and u2==None:
-#         # s1=location1.address
-#         # s2=location2.address
-#         # s1=u1.address
-#         # s2=u2.address
-#         # print(s1,"@@@@@",s2)
-#         # if location1 and location2:
-#         #     l1,l2=location1.latitude, location1.longitude
-#         #     l3,l4=location2.latitude, location2.longitude
-#         if u1 and u2:
-#             l1,l2=u1.latitude, u1.longitude
-#             l3,l4=u2.latitude, u2.longitude
-#             k = (l1, l2)
-#             de= (l3,l4)
-#             print(great_circle(k, de).km , "kasimsaifi @@@@@@@@@@@@@######")
-#             dis=great_circle(k, de).km
-#             p.distance=dis
-#             user.save() 
-#         else:
-#             return response.Response({'msg':"enter pick & drop Location"})  
-#         if user.select_truck_type!=None and user.pick_point!=None and user.drop_point!=None and user!=None:
-#             if current_time > '05:00:00' and current_time < '14:59:59':
-#                     fare=p.basefare+(dis - p.basekm)*p.price_per_km
-#                     p.total_price=fare
-#                     p.save()
-#                     print(fare,"kasim1")
-#                     return response.Response(f"{'Total Fare',fare ,'Time', current_time}")   
-#             elif current_time > '15:00:00' and current_time < '20:59:59':
-#                 fare=p.basefare+(dis - p.basekm)*p.price_per_km
-#                 p.total_price=fare
-#                 p.save()
-#                 print(fare,"kasim1")
-#                 return response.Response(f"{'Total Fare',fare ,'Time', current_time}")   
-#             elif current_time > '21:00:00' and current_time < '04:59:59':
-#                 fare=p.basefare+(dis - p.basekm)*p.price_per_km
-#                 p.total_price=fare
-#                 p.save()
-#                 print(fare,"kasim1")
-#                 return response.Response(f"{'Total Fare',fare ,'Time', current_time}")  
-#         else:
-#             return response.Response({"msg":"Please Enter The Valid credential"})
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Create your views here.
-# def index(request):
-#     if request.method == 'POST':
-#         fm=testapi1(request.POST or None)
-#         basefare=request.POST.get('basefare')
-#         basekm=request.POST.get('basekm')
-#         distance=request.POST.get('distance')
-#         price_per_km=request.POST.get('price_per_km')
-#         user1=Rider_Trip(basefare=basefare,basekm=basekm ,distance=distance ,price_per_km=price_per_km)
-#         print(user1,"USER!@#$")
-#         if fm.is_valid():
-#             fm.save()
-#     else:
-#         fm=testapi1(None)        
-#     return render(request, 'index.html' , {'fm':fm })    
-
-# def testapiclass(request):
-#     if request.method == 'POST':
-#         form=testapi(request.POST or None)
-#         for p in Rider_Trip.objects.all():
-#             print(p,"kasim")
-#         pick=request.POST.get('pick_point')
-#         drop=request.POST.get('drop_point')
-#         vehicle_type=request.POST.get('select_truck_type')
-#         now = datetime.datetime.now()
-#         current_time = now.strftime("%H:%M:%S")
-#         user=User_pick_form(pick_point=pick ,drop_point=drop ,select_truck_type=vehicle_type)
-#         if user.select_truck_type and user.pick_point and user.drop_point and user!=None:
-#             #    fare = p.basefare+(p.distance - p.basekm)*p.price_per_km  
-#             #    print(fare)      
-#             if current_time > '05:00:00' and current_time < '14:59:59':
-#                 fare=p.basefare+(p.distance - p.basekm)*p.price_per_km
-#                 print(fare,"kasim1")
-#             elif current_time > '15:00:00' and current_time < '20:59:59':
-#                fare = p.basefare+(p.distance - p.basekm)*p.price_per_km
-#                print(fare ,"kasim2")
-#                return fare
-#             elif current_time > '21:00:00' and current_time < '04:59:59':
-#                fare = p.basefare+(p.distance - p.basekm)*p.price_per_km  
-#                print(fare ,"kasim3")           
-#                return fare
-#         # if user.select_truck_type==request.user:
-#         #    if current_time > '05:00:00' and current_time < '14:59:59':
-#         #        fare = p.basefare+(p.distance-p.basekm)*p.price_per_km
-#         #        print(fare ,"kasim1")
-#         #        return fare
-#         #    elif current_time > '15:00:00' and current_time < '20:59:59':
-#         #        fare = p.basefare+(p.distance-p.basekm)*p.price_per_km
-#         #        print(fare ,"kasim2")
-#         #        return fare
-#         #    elif current_time > '21:00:00' and current_time < '04:59:59':
-#         #        fare = p.basefare+(p.distance-p.basekm)*p.price_per_km  
-#         #        print(fare ,"kasim3")          
-#         #        return fare
-#         # if user.select_truck_type and user.pick_point and user.drop_point and user!=None:
-#         #     fare=p.basefare+(p.distance - p.basekm)*p.price_per_km
-#         if form.is_valid():
-#             form.save()
-#     else:
-#         form=testapi(None) 
-#         # if user.select_truck_type and user.pick_point and user.drop_point and user!=None:
-#         #     fare=None
-#     return render(request, 'index.html' , {'form':form })    
-
-
-# import datetime
-# def get_fare(veh_type, current_time, basefare, basekm, distance, price_per_km):
-#     if veh_type == veh_type:
-#         if current_time > '05:00:00' and current_time < '14:59:59':
-#             fare = basefare+(distance-basekm)*price_per_km
-#         if current_time > '15:00:00' and current_time < '20:59:59':
-#             fare = basefare+(distance-basekm)*price_per_km
-#         if current_time > '21:00:00' and current_time < '04:59:59':
-#             fare = basefare+(distance-basekm)*price_per_km            
-#         return fare
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# class index(ModelViewSet):
-#     serializer_class =Testrider
-#     def get_queryset(self):
-#         posts = User_pick_form.objects.all()
-#         return posts
-#     def create(self,request ,*args, **kwargs):
-#         post_data=request.data
-#         user=User_pick_form(select_truck_type=post_data['select_truck_type'],pick_point=post_data['pick_point'],drop_point=post_data['drop_point']) 
-#         user.save() 
-#         serializer=Testrider(user)
-#         return Response(serializer.data) 
-   
-
-
-    # def get_fare(self,veh_type, current_time, basefare, basekm, distance, price_per_km):
-    #     if veh_type == veh_type:
-    #             if current_time > '05:00:00' and current_time < '14:59:59':
-    #                 fare = basefare+(distance-basekm)*price_per_km
-    #             if current_time > '15:00:00' and current_time < '20:59:59':
-    #                 fare = basefare+(distance-basekm)*price_per_km
-    #             if current_time > '21:00:00' and current_time < '04:59:59':
-    #                 fare = basefare+(distance-basekm)*price_per_km            
-    #             return fare
-
-    #     veh_type = 'tata ace 7ft'
-    #     now = datetime.datetime.now()
-    #     current_time = now.strftime("%H:%M:%S")
-    #     basefare = 350
-    #     basekm = 3
-    #     distance = 50
-    #     price_per_km = 28
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# def get_fare(veh_type, current_time, basefare, basekm, distance, price_per_km):
-#     if veh_type == veh_type:
-#         if current_time > '05:00:00' and current_time < '14:59:59':
-#             fare = basefare+(distance-basekm)*price_per_km
-#         if current_time > '15:00:00' and current_time < '20:59:59':
-#             fare = basefare+(distance-basekm)*price_per_km
-#         if current_time > '21:00:00' and current_time < '04:59:59':
-#             fare = basefare+(distance-basekm)*price_per_km            
-#         return fare
-
-# veh_type = 'tata ace 7ft'
-# now = datetime.datetime.now()
-# current_time = now.strftime("%H:%M:%S")
-# basefare = 350
-# basekm = 3
-# distance = 50
-# price_per_km = 28
-
-# get_fare(veh_type, current_time, basefare, basekm, distance, price_per_km)
+                elif (p.extra3_distance >= dis or p.extra4_distance >=dis 
+                   or  C.extra3_distance >= dis or C.extra4_distance >= dis or
+                  E.extra3_distance >= dis or E.extra4_distance >= dis 
+                  or  M.extra3_distance >= dis or T.extra4_distance >= dis
+                  or  TT.extra3_distance >= dis or TT.extra4_distance >= dis
+                  or  B.extra3_distance >= dis or B.extra4_distance >= dis or K.vehicle_type1
+                  or K.vehicle_type2 or K.vehicle_type3 or K.vehicle_type4 or
+                     K.vehicle_type5 or K.vehicle_type6 or K.vehicle_type7):
+                    fare1,f1=p.basefare+(dis - p.basekm)*p.price3_per_km , K.vehicle_type1
+                    fare2,f2=C.basefare+(dis - C.basekm)*C.price3_per_km,K.vehicle_type2
+                    fare3,f3=E.basefare+(dis - E.basekm)*E.price3_per_km,K.vehicle_type3
+                    fare4,f4=M.basefare+(dis - M.basekm)*M.price3_per_km,K.vehicle_type4
+                    fare5,f5=T.basefare+(dis - T.basekm)*T.price3_per_km,K.vehicle_type5
+                    fare6,f6=TT.basefare+(dis - TT.basekm)*TT.price3_per_km,K.vehicle_type6
+                    fare7,f7=B.basefare+(dis - B.basekm)*B.price3_per_km,K.vehicle_type7
+                    user.total_price_Bike=fare1
+                    user.total_price_Champion=fare2
+                    user.total_price_Ecovan=fare3
+                    user.total_price_Maruti=fare4
+                    user.total_price_Tata_ace_7FT=fare5
+                    user.total_price_Tata_ace_8FT=fare6
+                    user.total_price_Blero_8FT=fare7
+                    # user.save()
+                    print("K2")
+                    return response.Response({f1,fare1,fare2,fare3,fare4,fare5,fare6,fare7,f2,f3,f4,f5,f6,f7 }) 
+                
+             
+                elif (p.extra4_distance >= dis or p.extra5_distance >=dis 
+                   or  C.extra4_distance >= dis or C.extra5_distance >= dis 
+                   or E.extra4_distance >= dis or E.extra5_distance >= dis 
+                  or  M.extra4_distance >= dis or T.extra5_distance >= dis
+                  or  TT.extra4_distance >= dis or TT.extra5_distance >= dis
+                  or  B.extra4_distance >= dis or B.extra5_distance >= dis or K.vehicle_type1
+                  or K.vehicle_type2 or K.vehicle_type3 or K.vehicle_type4 or
+                     K.vehicle_type5 or K.vehicle_type6 or K.vehicle_type7):
+                    fare1,f1=p.basefare+(dis - p.basekm)*p.price4_per_km , K.vehicle_type1
+                    fare2,f2=C.basefare+(dis - C.basekm)*C.price4_per_km,K.vehicle_type2
+                    fare3,f3=E.basefare+(dis - E.basekm)*E.price4_per_km,K.vehicle_type3
+                    fare4,f4=M.basefare+(dis - M.basekm)*M.price4_per_km,K.vehicle_type4
+                    fare5,f5=T.basefare+(dis - T.basekm)*T.price4_per_km,K.vehicle_type5
+                    fare6,f6=TT.basefare+(dis - TT.basekm)*TT.price4_per_km,K.vehicle_type6
+                    fare7,f7=B.basefare+(dis - B.basekm)*B.price4_per_km,K.vehicle_type7
+                    user.total_price_Bike=fare1
+                    user.total_price_Champion=fare2
+                    user.total_price_Ecovan=fare3
+                    user.total_price_Maruti=fare4
+                    user.total_price_Tata_ace_7FT=fare5
+                    user.total_price_Tata_ace_8FT=fare6
+                    user.total_price_Blero_8FT=fare7
+                    # user.save()
+                    print("K2")
+                    return response.Response({f1,fare1,fare2,fare3,fare4,fare5,fare6,fare7,f2,f3,f4,f5,f6,f7 }) 
+                      
+                elif (p.extra5_distance >= dis or p.extra6_distance >=dis 
+                   or  C.extra5_distance >= dis or C.extra6_distance >= dis or
+                  E.extra5_distance >= dis or E.extra6_distance >= dis 
+                  or  M.extra5_distance >= dis or T.extra6_distance >= dis
+                  or  TT.extra5_distance >= dis or TT.extra6_distance >= dis
+                  or  B.extra5_distance >= dis or B.extra6_distance >= dis or K.vehicle_type1
+                  or K.vehicle_type2 or K.vehicle_type3 or K.vehicle_type4 or
+                     K.vehicle_type5 or K.vehicle_type6 or K.vehicle_type7):
+                    fare1,f1=p.basefare+(dis - p.basekm)*p.price5_per_km , K.vehicle_type1
+                    fare2,f2=C.basefare+(dis - C.basekm)*C.price5_per_km,K.vehicle_type2
+                    fare3,f3=E.basefare+(dis - E.basekm)*E.price5_per_km,K.vehicle_type3
+                    fare4,f4=M.basefare+(dis - M.basekm)*M.price5_per_km,K.vehicle_type4
+                    fare5,f5=T.basefare+(dis - T.basekm)*T.price5_per_km,K.vehicle_type5
+                    fare6,f6=TT.basefare+(dis - TT.basekm)*TT.price5_per_km,K.vehicle_type6
+                    fare7,f7=B.basefare+(dis - B.basekm)*B.price5_per_km,K.vehicle_type7
+                    user.total_price_Bike=fare1
+                    user.total_price_Champion=fare2
+                    user.total_price_Ecovan=fare3
+                    user.total_price_Maruti=fare4
+                    user.total_price_Tata_ace_7FT=fare5
+                    user.total_price_Tata_ace_8FT=fare6
+                    user.total_price_Blero_8FT=fare7
+                    # user.save()
+                    print("K2")
+                    return response.Response({f1,fare1,fare2,fare3,fare4,fare5,fare6,fare7,f2,f3,f4,f5,f6,f7 }) 
+                
+                elif (p.extra6_distance >= dis or dis or  
+                    C.extra6_distance >= dis or  dis or 
+                    E.extra6_distance >= dis or dis or  
+                    M.extra6_distance >= dis or dis or  
+                    TT.extra6_distance >= dis or  dis or  
+                    B.extra6_distance >= dis or  dis or 
+                    K.vehicle_type1 or K.vehicle_type2 or 
+                    K.vehicle_type3 or K.vehicle_type4 or
+                    K.vehicle_type5 or K.vehicle_type6 or K.vehicle_type7):
+
+                    fare1,f1=p.basefare+(dis - p.basekm)*p.price6_per_km , K.vehicle_type1
+                    fare2,f2=C.basefare+(dis - C.basekm)*C.price6_per_km,K.vehicle_type2
+                    fare3,f3=E.basefare+(dis - E.basekm)*E.price6_per_km,K.vehicle_type3
+                    fare4,f4=M.basefare+(dis - M.basekm)*M.price6_per_km,K.vehicle_type4
+                    fare5,f5=T.basefare+(dis - T.basekm)*T.price6_per_km,K.vehicle_type5
+                    fare6,f6=TT.basefare+(dis - TT.basekm)*TT.price6_per_km,K.vehicle_type6
+                    fare7,f7=B.basefare+(dis - B.basekm)*B.price6_per_km,K.vehicle_type7
+                    user.total_price_Bike=fare1
+                    user.total_price_Champion=fare2
+                    user.total_price_Ecovan=fare3
+                    user.total_price_Maruti=fare4
+                    user.total_price_Tata_ace_7FT=fare5
+                    user.total_price_Tata_ace_8FT=fare6
+                    user.total_price_Blero_8FT=fare7
+                    # user.save()
+                    print("K2")
+                    return response.Response({f1,fare1,fare2,fare3,fare4,fare5,fare6,fare7,f2,f3,f4,f5,f6,f7 }) 
+                
+             
+             
+             
+            
 
 
