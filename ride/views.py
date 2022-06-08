@@ -57,7 +57,7 @@ class RegisterAPI(ModelViewSet):
         current_time = now.strftime("%H:%M:%S")
         serializer.is_valid(raise_exception=True)
         geolocator = Nominatim(user_agent="kasim",timeout=10)
-        user = serializer.save()    b
+        user = serializer.save()    
         n=user.pick_point
         n1=user.drop_point
         location1 = geolocator.geocode(n) 
