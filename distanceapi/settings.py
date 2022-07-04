@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-79!o^21dtcdqx0l)lk%#b5rg0zkd44i2!4tb6j*zapxs=i^4vy
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'Userform',
     'rest_framework',
+    'Confirm_Booking',
 ]
 
 MIDDLEWARE = [
@@ -78,25 +79,25 @@ WSGI_APPLICATION = 'distanceapi.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
-
-
-
 # DATABASES = {
 #     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'mydb',
-#         'USER': 'root',
-#         'PASSWORD': 'kasim@850K',
-#         'HOST': 'localhost',
-#         'PORT': 3306,
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
 # }
+
+
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'mydb',
+        'USER': 'root',
+        'PASSWORD': 'kasim@850K',
+        'HOST': 'localhost',
+        'PORT': 3306,
+    }
+}
 
 
 # Password validation

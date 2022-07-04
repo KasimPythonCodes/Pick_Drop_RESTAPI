@@ -1,4 +1,7 @@
 <!DOCTYPE html>
+{% load static %}
+{% load rest_framework %}
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -8,14 +11,122 @@
     <title>Document</title>
 </head>
 <body>
-  <form>
+  
+  <div class="container mt-5">
+    {% comment %}  <form action="/pick_and_drop_api/{{user.id}}/" method="post">{% endcomment %}
+
+<form action="/check" method="post">
+    {% csrf_token %}
+
+    <!-- {{context}} -->
+
     <div class="row">
-      <div class="col-6">Pick Up
-        {{k}}
-        <div class="col-6">Drop</div>
+      <div class="col-sm-3">
+        <div class="card" style="width: 15rem;">
+          <div class="card-body">
+            <h5 class="card-title">{{f1}} Ride</h5>
+          </div>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item">{{f1}} : &nbsp; ${{fare1}} &nbsp; Distance : {{dis}} KM</li>
+          </ul>
+          <div class="card-body">
+            <!-- <input type="text" name="bike_id" id="" > -->
+        <button type="submit" class="btn btn-primary">Ride</button>
+          </div>
+        </div>
+        </div>
+  <div class="col-sm-3">
+    <div class="card" style="width: 15rem;">
+      <div class="card-body">
+        <h5 class="card-title">{{f2}} Ride</h5>
+      </div>
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item">{{f2}} : &nbsp; ${{fare2}} &nbsp; Distance : {{dis}} KM</li>
+      </ul>
+      <div class="card-body">
+    <button type="submit" class="btn btn-primary">Ride</button>
       </div>
     </div>
-    <button type="submit" class="btn btn-primary">Submit</button>
+   </div>
+   <div class="col-sm-3">
+   <div class="card" style="width: 15rem;">
+    <div class="card-body">
+      <h5 class="card-title">{{f3}} Ride</h5>
+    </div>
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item">{{f3}} : &nbsp; ${{fare3}} &nbsp; Distance : {{dis}} KM</li>
+    </ul>
+    <div class="card-body">
+  <button type="submit" class="btn btn-primary">Ride</button>
+  </div>
+</div>
+</div>
+<div class="col-sm-3">
+<div class="card" style="width: 15rem;">
+  <div class="card-body">
+    <h5 class="card-title">{{f4}} Ride</h5>
+  </div>
+  <ul class="list-group list-group-flush">
+    <li class="list-group-item">{{f4}} : &nbsp; ${{fare4}} &nbsp; Distance : {{dis}} KM</li>
+  </ul>
+  <div class="card-body">
+<button type="submit" class="btn btn-primary">Ride</button>
+  </div>
+</div>
+ </div> 
+</div> 
+
+<div class="row">
+  <div class="col-sm-3">
+    <div class="card" style="width: 15rem;">
+      <div class="card-body">
+        <h5 class="card-title">{{f5}} Ride</h5>
+      </div>
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item">{{f5}} : &nbsp; ${{fare5}} &nbsp; Distance : {{dis}} KM</li>
+      </ul>
+      <div class="card-body">
+    <button type="submit" class="btn btn-primary">Ride</button>
+      </div>
+    </div>
+    </div>
+    <div class="col-sm-3">
+      <div class="card" style="width: 15rem;">
+        <div class="card-body">
+          <h5 class="card-title">{{f6}} Ride</h5>
+        </div>
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item">{{f6}} : &nbsp; ${{fare6}} &nbsp; Distance : {{dis}} KM</li>
+        </ul>
+        <div class="card-body">
+      <button type="submit" class="btn btn-primary">Ride</button>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-3">
+      <div class="card" style="width: 15rem;">
+        <div class="card-body">
+          <h5 class="card-title">{{f7}} Ride</h5>
+        </div>
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item">{{f7}} : &nbsp; ${{fare7}} &nbsp; Distance : {{dis}} KM</li>
+        </ul>
+        <div class="card-body">
+      <button type="submit" class="btn btn-primary"> Ride
+      </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+
+<!-- rest -->
+
+
+
   </form>
+</div>
+
 </body>
 </html>

@@ -1,0 +1,228 @@
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+{{x}}
+<div class="container mt-5">
+<div class="row">
+<div class="col-sm-4">
+      <div class="card">
+        <div class="card-body">
+            <h5 class="card-title"> {{c1}} </h5>
+          <ul><li>
+          {{data.pick_point}}
+
+          </li>
+          <br>
+          <li>
+            {{data.drop_point}}
+
+          </li>
+          <br>
+          <li>
+            {{data.distance}} &nbsp; KM.
+ 
+          </li>
+          <li>
+            <b>₹</b>  &nbsp;{{fare1}} 
+          </li>
+        </ul>
+        <!-- <input type="number"  name="vehicle_name" value="" id=""> -->
+        <a href="/check/point/Check_bike"><button type="submit" class="btn btn-primary">Ride Bike</button></a>
+          
+        </div>
+      </div>
+    </div>
+  <br>
+
+  <div class="col-sm-4">
+    <div class="card">
+      <div class="card-body">
+          <h5 class="card-title"> {{c2}} </h5>
+        <ul><li>
+        {{data.pick_point}}
+
+        </li>
+        <br>
+        <li>
+          {{data.drop_point}}
+
+        </li>
+        <br>
+        <li>
+          {{data.distance}} &nbsp; KM.
+        </li>
+        <li>
+          <b>₹</b>  &nbsp;{{fare2}} 
+        </li>
+      </ul>
+      <input type="text" hidden name="vehicle" value="" id="">
+        <a href="/check/point/Check_Champion"><button type="submit" class="btn btn-primary">Ride Champion</button></a>
+      </div>
+    </div>
+  </div>
+
+<br>
+
+<div class="col-sm-4">
+    <div class="card">
+      <div class="card-body">
+          <h5 class="card-title"> {{c3}} </h5>
+        <ul><li>
+        {{data.pick_point}}
+
+        </li>
+        <br>
+        <li>
+          {{data.drop_point}}
+
+        </li>
+        <br>
+        <li>
+          {{data.distance}} &nbsp; KM.
+
+        </li>
+        <li>
+          <b>₹</b>  &nbsp;{{fare3}} 
+        </li>
+      </ul>
+      <input type="text" hidden name="vehicle" value="" id="">
+        <a href="/check/pick_and_drop_api/Check_ecovan"><button type="submit" class="btn btn-primary">Ride Ecovan</button></a>
+
+      </div>
+    </div>
+  </div>
+
+<br>
+<div class="row">
+<div class="col-sm-4 mt-3">
+    <div class="card">
+      <div class="card-body">
+          <h5 class="card-title"> {{c4}} </h5>
+        <ul><li>
+        {{data.pick_point}}
+
+        </li>
+        <br>
+        <li>
+          {{data.drop_point}}
+
+        </li>
+        <br>
+        <li>
+          {{data.distance}} &nbsp; KM.
+
+        </li>
+        <li>
+          <b>₹</b>  &nbsp;{{fare4}} 
+        </li>
+      </ul>
+      <input type="text" hidden name="vehicle" value="" id="">
+        <a href="/check/pick_and_drop_api/Check_Maruti_suzuki_super_carry_Trip"><button type="submit" class="btn btn-primary">Ride Maruti</button></a>
+      </div>
+    </div>
+  </div>
+
+
+<br>
+
+<div class="col-sm-4 mt-3">
+    <div class="card">
+      <div class="card-body">
+          <h5 class="card-title"> {{c5}} </h5>
+        <ul><li>
+        {{data.pick_point}}
+
+        </li>
+        <br>
+        <li>
+          {{data.drop_point}}
+
+        </li>
+        <br>
+        <li>
+          {{data.distance}} &nbsp; KM.
+
+        </li>
+        <li>
+          <b>₹</b>  &nbsp;{{fare5}} 
+        </li>
+      </ul>
+      <input type="text" hidden name="vehicle" value="" id="">
+        <a href="/check/pick_and_drop_api/Check_Tata_ace_7FT_Trip"><button type="submit" class="btn btn-primary">Ride Tata 7FT</button></a>
+
+      </div>
+    </div>
+  </div>
+
+  <br>
+
+  <div class="col-sm-4 mt-4">
+    <div class="card">
+      <div class="card-body">
+          <h5 class="card-title"> {{c6}} </h5>
+        <ul><li>
+        {{data.pick_point}}
+
+        </li>
+        <br>
+        <li>
+          {{data.drop_point}}
+
+        </li>
+        <br>
+        <li>
+          {{data.distance}} &nbsp; KM.
+
+        </li>
+        <li>
+          <b>₹</b>  &nbsp;{{fare6}} 
+        </li>
+      </ul>
+      <input type="text" hidden name="vehicle" value="" id="">
+        <a href="/check/pick_and_drop_api//Check_Tata_ace_8FT_Trip"><button type="submit" class="btn btn-primary">Ride Tata 8FT</button></a>
+
+      </div>
+    </div>
+  </div>
+</div>
+<br>
+
+<div class="col-sm-4 mt-5">
+    <div class="card">
+      <div class="card-body">
+          <h5 class="card-title"> {{c7}} </h5>
+        <ul><li>
+        {{data.pick_point}}
+
+        </li>
+        <br>
+        <li>
+          {{data.drop_point}}
+
+        </li>
+        <br>
+        <li>
+          {{data.distance}} &nbsp; KM.
+
+        </li>
+        <li>
+          <b>₹</b>  &nbsp;{{fare7}} 
+        </li>
+      </ul>
+      <!-- <input type="text" name="vehicle" value="{{vehicle.vehicle_type7}}" id=""> -->
+        <a href="/check/pick_and_drop_api/Check_Blero_8FT_Trip"><button type="submit" class="btn btn-primary">Ride Blero</button></a>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+
+
+
+
+{% comment %}
+
+{% endfor %}
+{% endcomment %}
+
+

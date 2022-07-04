@@ -2,7 +2,7 @@ from django.contrib import admin
 from ride.models import*
 # Register your models here.
 
-# admin.site.register(User_pick_form)
+
 class BikeAdmin(admin.ModelAdmin):
     # exclude=("headline ",)
     list_display=('basefare','basekm','price1_per_km','price2_per_km','price3_per_km','price4_per_km',
@@ -84,13 +84,8 @@ admin.site.register(Tata_ace_8FT_Trip , TataAdmin)
 
 class TypeAdmin(admin.ModelAdmin):
     # exclude=("headline ",)
-    list_display=('vehicle_type1','vehicle_type2','vehicle_type3','vehicle_type4','vehicle_type5','vehicle_type6','vehicle_type7')
+    # list_display=('id','vehicle_type1','vehicle_type2','vehicle_type3','vehicle_type4','vehicle_type5','vehicle_type6','vehicle_type7')
     # readonly_fields=('basefare','basekm',)
+    list_display=('id', 'vehicle')
 admin.site.register(Vehicle_type , TypeAdmin)
 
-
-# class IAdmin(admin.ModelAdmin):
-#     # exclude=("headline ",)
-#     list_display=('pick_point','drop_point' , 'distance' ,'total_price')
-#     # readonly_fields=('basefare','basekm',)
-# admin.site.register(User_pick_form , IAdmin)
