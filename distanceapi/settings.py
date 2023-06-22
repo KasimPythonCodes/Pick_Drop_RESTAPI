@@ -73,7 +73,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'distanceapi.wsgi.application'
+WSGI_APPLICATION = 'distanceapi.asgi.application'
 
 
 # Database
